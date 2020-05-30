@@ -9,16 +9,26 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Editor for a Timer, allows for setting the name and total time
+ */
 public class TimerEditor extends Stage {
 
+    //Scene Graph
     private Scene scene;
         private VBox root;
             private InputLine name;
             private InputLine time;
             private Button submit;
-
+    /**
+     * Timer that the editor is editing
+     */
     private Timer timer;
 
+    /**
+     * Sets up the scene graph
+     * @param _timer Timer that the editor edits
+     */
     public TimerEditor(Timer _timer) {
         super();
 
@@ -34,7 +44,7 @@ public class TimerEditor extends Stage {
 
                 submit = new Button("Done");
                 submit.minWidthProperty().bind(this.widthProperty().subtract(40));
-                submit.setOnMouseClicked(event -> onDone(event));
+                submit.setOnMouseClicked(event -> onDone());
 
             root.getChildren().addAll(name, time, submit);
 
@@ -44,12 +54,21 @@ public class TimerEditor extends Stage {
         setUp();
     }
 
+    /**
+     * Sets up the Editor window
+     */
     private void setUp() {
         setTitle("Editor");
         setMinWidth(500);
     }
 
-    private void onDone(MouseEvent e) {
+    /**
+     * Called when the submit button is pressed.
+     * <br> Converts the string input of the Time inputLine
+     * into Hours, Mins, and Secs
+     * <br>Constrains hours to 99, mins to 59, and secs to 59
+     */
+    private void onDone() {
 
         String timerName = name.getText();
         int hours, mins, secs;

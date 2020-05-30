@@ -13,22 +13,59 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import timer.Timer;
 
+/**
+ * A Timer creator which allows the user to edit, pause, play, and delete timers
+ */
 public class Timekeeper extends Application {
 
+    /**
+     * Launches the application
+     * @param args
+     */
     public static void main(String[] args) {
         Timekeeper.launch(args);
     }
 
+    /**
+     * main stage
+     */
     private Stage stage;
+        /**
+         * Main Scene
+         */
         private Scene scene;
+            /**
+             * Root of the scene graph
+             */
             private BorderPane root;
+                /**
+                 * Top menu bar
+                 */
                 private MenuBar menuBar;
+                    /**
+                     * Settings Menu in menuBar
+                     */
                     private Menu settingsMenu;
+                        /**
+                         * Menut Item that closes the program
+                         */
                         private MenuItem closeItem;
+                /**
+                 * Scroll pane that allows scrolling of the timers
+                 */
                 private ScrollPane timersScrollPane;
+                    /**
+                     * List of all the timers
+                     */
                     private VBox timerList;
+                /**
+                 * Button to add timers
+                 */
                 private Button addTimer;
 
+    /**
+     * Loads the Icons for the program and sets the parameters of the stage
+     */
     private void setupStage() {
         stage.setTitle("Timekeeper");
         try {
@@ -46,6 +83,11 @@ public class Timekeeper extends Application {
         stage.setOnCloseRequest(event -> Platform.exit());
     }
 
+    /**
+     * Essentially the constructor for the class, sets up the scene graph and initializes the fields
+     * @param primaryStage
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -94,8 +136,21 @@ public class Timekeeper extends Application {
 
     }
 
+    /**
+     * Called when the addTimer button is pressed.
+     * <br>Adds new timer
+     * @param e
+     */
     private void addTimerOnClick(MouseEvent e) {
-        timerList.getChildren().add(new Timer(timersScrollPane.widthProperty()));
+        timerList.getChildren().add(new Timer(timersScrollPane.widthProperty(), this));
+    }
+
+    /**
+     * Deletes the specified Timer
+     * @param timer {@link Timer} to delete
+     */
+    public void deleteTimer(Timer timer) {
+        timerList.getChildren().remove(timer);
     }
 
 }

@@ -12,9 +12,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import timekeeper.Timekeeper;
 
+/**
+ * A Timer that displays the time remaining, total time, and its name as well as a few buttons
+ */
 public class Timer extends StackPane {
 
+    //Scene Graph
     private Rectangle bkgd;
     private BorderPane mainBorderPane;
         private HBox leftHBox;
@@ -24,17 +29,35 @@ public class Timer extends StackPane {
             private Button pausePlay;
             private Button reset;
             private Button edit;
+            private Button delete;
 
+    /**
+     * Editor window to set the name and total time for the Timer
+     */
     private TimerEditor editor;
-    private TimePiece timePiece;
+    /**
+     * Timeline tha is used update the time on the Timer
+     */
     private Timeline timeLine;
 
+    //The current times and total times respectively
     int hour, min, sec, totHour, totMin, totSec;
 
+    /**
+     * Unicode character for the play button
+     */
     private String play = "▶";
+    /**
+     * Unicode character for the pause button
+     */
     private String pause = "\u23F8";//Pause Icon
 
-    public Timer(ReadOnlyDoubleProperty widthProperty) {
+    /**
+     * Constructor that intializes the node graph and fields
+     * @param widthProperty Width that the timer conforms to minus some padding
+     * @param timekeeper Parent of the Timer
+     */
+    public Timer(ReadOnlyDoubleProperty widthProperty, Timekeeper timekeeper) {
         super();
 
         hour = min = sec = totHour = totMin = totSec = 0;
@@ -81,7 +104,13 @@ public class Timer extends StackPane {
                 edit.setFont(buttonFont);
                 edit.setOnMouseClicked(event -> onEdit());
 
-            rightHBox.getChildren().addAll(pausePlay, reset, edit);
+                delete = new Button( "X");
+                delete.setFont(buttonFont);
+                delete.setOnMouseClicked(event -> {
+                    timekeeper.deleteTimer(this);
+                });
+
+            rightHBox.getChildren().addAll(pausePlay, reset, edit, delete);
 
         mainBorderPane.setLeft(leftHBox);
         BorderPane.setAlignment(leftHBox, Pos.CENTER_LEFT);
@@ -97,10 +126,20 @@ public class Timer extends StackPane {
 
     }
 
+    /**
+     * Sets the name of the Timer
+     * @param nameStr name to give the Timer
+     */
     void setName(String nameStr) {
         name.setText(nameStr);
     }
 
+    /**
+     * Sets the total amount of time for the Timer
+     * @param hours Number of Hours
+     * @param mins Number of Minutes
+     * @param secs Number of Seconds
+     */
     void setTotalTime(int hours, int mins, int secs) {
         totHour = hour =hours;
         totMin = min = mins;
@@ -109,6 +148,9 @@ public class Timer extends StackPane {
         setBackground(new Background(new BackgroundFill(Color.BEIGE, new CornerRadii(5), Insets.EMPTY)));
     }
 
+    /**
+     * Resets the Timer
+     */
     void onReset() {
         hour = totHour;
         min = totMin;
@@ -117,10 +159,17 @@ public class Timer extends StackPane {
         setCurrentTime();
     }
 
+    /**
+     * Updates the time displayed by the Timer based on the time fields
+     */
     void setCurrentTime() {
         countdownTime.setText(String.format("%1$02d:%2$02d:%3$02d/%4$02d:%5$02d:%6$02d", hour, min, sec, totHour, totMin, totSec));
     }
 
+    /**
+     * Called by the timeline every second and updates the time accordingly
+     * <br>When the time reaches 00:00:00 it is paused and turned red
+     */
     private void updateTime() {
         if (hour > 0 || min > 0 || sec > 0) {
             sec--;
@@ -141,8 +190,16 @@ public class Timer extends StackPane {
         }
     }
 
+    /**
+     * represents if the Pause/Play button is in Play mode
+     */
     private boolean isPlay = true;
 
+    /**
+     * Called when the PausePlay button is pressed
+     * <br> Pauses and plays the timeline and
+     * flips the icon from pause to tplay nad vice-versa
+     */
     private void onPausePlay() {
         if (isPlay) {
             pausePlay.setText(pause);
@@ -154,6 +211,10 @@ public class Timer extends StackPane {
         isPlay = !isPlay;
     }
 
+    /**
+     * Called by the edit button
+     * <br>Opens the editor
+     */
     private void onEdit() {
         editor.show();
     }
