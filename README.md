@@ -1,2 +1,2 @@
 # timekeeper.Timekeeper
-A timer and stopwatch
+Allows for multiple timers to be created, edited, played, paused, and deleted.
